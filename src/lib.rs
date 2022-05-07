@@ -1,11 +1,12 @@
 use opentelemetry::Context;
-use std::{collections::HashMap, hash::Hash};
-use tracing::{info_span, span};
-// use tracing_opentelemetry::OpenTelemetrySpanExt;
-use tracing::Span;
-use tracing_opentelemetry::OpenTelemetrySpanExt;
+use std::{collections::HashMap};
 
-trait ToKeys {
+pub use tracing_opentelemetry::OpenTelemetrySpanExt;
+pub use opentelemetry::global::get_text_map_propagator;
+pub use opentelemetry::propagation::TextMapPropagator;
+pub use tracing::{info_span};
+pub use tracing::Span;
+pub trait ToKeys {
     fn to_keys(&self) -> String;
 }
 
@@ -42,11 +43,11 @@ impl<T0: ToString> ToKeys for (T0,) {
         self.0.to_string()
     }
 }
-fn enter1(
+pub fn enter1(
     map: &mut HashMap<String, (HashMap<String, String>, Span)>,
     k1: String,
 ) -> (Context, &mut Span) {
-    use opentelemetry::global::get_text_map_propagator;
+    use tracing_opentelemetry::OpenTelemetrySpanExt;
     let s_name = format!("span:{}", k1);
     let (m, s) = map.entry(k1).or_insert_with(|| {
         let mut m = HashMap::new();
@@ -60,9 +61,11 @@ fn enter1(
     (ctx, s)
 }
 
+#[macro_export]
 macro_rules! enter_parrent {
     ($map: expr, $t0: expr, $t1: expr, $t2: expr, $t3: expr) => {{
-        use crate::ToKeys;
+        use $crate::ToKeys;
+        use $crate::enter1;
         let (p0, _) = enter1($map, ($t0,).to_keys());
         let _g0 = p0.attach();
         let (p1, _) = enter1($map, ($t0, $t1).to_keys());
@@ -73,7 +76,8 @@ macro_rules! enter_parrent {
         s
     }};
     ($map: expr, $t0: expr, $t1: expr, $t2: expr) => {{
-        use crate::ToKeys;
+        use $crate::ToKeys;
+        use $crate::enter1;
         let (p0, _) = enter1($map, ($t0,).to_keys());
         let _g0 = p0.attach();
         let (p1, _) = enter1($map, ($t0, $t1).to_keys());
@@ -82,18 +86,22 @@ macro_rules! enter_parrent {
         s
     }};
     ($map: expr, $t0: expr, $t1: expr) => {{
-        use crate::ToKeys;
+        use $crate::ToKeys;
+        use $crate::enter1;
         let (p0, _) = enter1($map, ($t0,).to_keys());
         let _g0 = p0.attach();
         let (_, s) = enter1($map, ($t0, $t1).to_keys());
         s
     }};
     ($map: expr, $t0: expr) => {{
-        use crate::ToKeys;
+        use $crate::ToKeys;
+        use $crate::enter1;
         let (_, s) = enter1($map, ($t0,).to_keys());
         s
     }};
 }
+
+
 #[cfg(test)]
 mod tests {
 

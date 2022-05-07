@@ -9,10 +9,11 @@ edition = "2021"
 tracing = {path="../tracing/tracing"}
 tracing-subscriber = {path="../tracing/tracing-subscriber"}
 opentelemetry = { path="../opentelemetry-rust/opentelemetry", features = ["rt-tokio"] }
+tracing-opentelemetry = {path="../tracing/tracing-opentelemetry"}
 
 [dev-dependencies]
 
 opentelemetry-jaeger = { path="../opentelemetry-rust/opentelemetry-jaeger", features = ["rt-tokio", "reqwest_collector_client"] }
-tracing-opentelemetry = {path="../tracing/tracing-opentelemetry"}
+
 tokio = {version = "1", features = ["full"]}
 futures="0"
