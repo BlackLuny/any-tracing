@@ -47,7 +47,6 @@ pub fn enter1(
     map: &mut HashMap<String, (HashMap<String, String>, Span)>,
     k1: String,
 ) -> (Context, &mut Span) {
-    use tracing_opentelemetry::OpenTelemetrySpanExt;
     let s_name = format!("span:{}", k1);
     let (m, s) = map.entry(k1).or_insert_with(|| {
         let mut m = HashMap::new();
