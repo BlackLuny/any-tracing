@@ -110,19 +110,14 @@ mod tests {
         global::{set_text_map_propagator, shutdown_tracer_provider},
         runtime::Tokio,
         sdk::propagation::TraceContextPropagator,
-        trace::TraceContextExt,
-        Context,
     };
-    use tracing::{collect::set_global_default, info, info_span, span, Span};
-    use tracing_opentelemetry::OpenTelemetrySpanExt;
+    use tracing::{collect::set_global_default, info, info_span};
     use tracing_subscriber::{subscribe::CollectExt, Registry};
-
-    use crate::enter1;
 
     #[tokio::main]
     #[test]
     async fn it_works() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let mut map = Arc::new(RwLock::new(HashMap::new()));
+        let map = Arc::new(RwLock::new(HashMap::new()));
         set_text_map_propagator(TraceContextPropagator::new());
 
         let tracer = opentelemetry_jaeger::new_collector_pipeline()
@@ -140,7 +135,7 @@ mod tests {
                 for k in 0 as i32..3 {
                     for m in 0 as i32..1 {
                         let sp = enter_parrent!(&mut lock, i, j, k, m);
-                        let e = sp.enter();
+                        let _e = sp.enter();
                         let sub_span = info_span!("inner");
                         let _g = sub_span.enter();
                         info!("abc");
@@ -152,7 +147,7 @@ mod tests {
             for j in 0 as i32..3 {
                 for k in 0 as i32..300 {
                     let sp = enter_parrent!(&mut lock, i, j, k);
-                    let e = sp.enter();
+                    let _e = sp.enter();
                     let sub_span = info_span!("inner");
                     let _g = sub_span.enter();
                     info!("abc");
@@ -163,7 +158,7 @@ mod tests {
         for i in 0 as i32..1 {
             for j in 0 as i32..300 {
                 let sp = enter_parrent!(&mut lock, i, j);
-                let e = sp.enter();
+                let _e = sp.enter();
                 let sub_span = info_span!("inner");
                 let _g = sub_span.enter();
                 info!("abc");
@@ -173,7 +168,7 @@ mod tests {
         for i in 0 as i32..300 {
             let k = format!("task: {i}");
             let sp = enter_parrent!(&mut lock, k);
-            let e = sp.enter();
+            let _e = sp.enter();
             let sub_span = info_span!("inner");
             let _g = sub_span.enter();
             info!("abc");
