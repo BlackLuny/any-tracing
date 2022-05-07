@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 tracing = {path="../tracing/tracing"}
 tracing-subscriber = {path="../tracing/tracing-subscriber"}
-typedmap = "0.2.0"
 opentelemetry = { path="../opentelemetry-rust/opentelemetry", features = ["rt-tokio"] }
 
 [dev-dependencies]
