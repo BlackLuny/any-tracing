@@ -1,0 +1,19 @@
+[package]
+name = "any-tracing"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tracing = {path="../tracing/tracing"}
+tracing-subscriber = {path="../tracing/tracing-subscriber"}
+typedmap = "0.2.0"
+opentelemetry = { path="../opentelemetry-rust/opentelemetry", features = ["rt-tokio"] }
+
+[dev-dependencies]
+
+opentelemetry-jaeger = { path="../opentelemetry-rust/opentelemetry-jaeger", features = ["rt-tokio", "reqwest_collector_client"] }
+tracing-opentelemetry = {path="../tracing/tracing-opentelemetry"}
+tokio = {version = "1", features = ["full"]}
+futures="0"
