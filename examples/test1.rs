@@ -9,7 +9,7 @@ use tracing_subscriber::{Registry, subscribe::CollectExt};
 extern crate any_tracing;
 #[tokio::main]
     async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-        let mut map = Arc::new(RwLock::new(HashMap::new()));
+        let map = Arc::new(RwLock::new(HashMap::new()));
         set_text_map_propagator(TraceContextPropagator::new());
 
         let tracer = opentelemetry_jaeger::new_collector_pipeline()
@@ -27,7 +27,7 @@ extern crate any_tracing;
                 for k in 0 as i32..3 {
                     for m in 0 as i32..1 {
                         let sp = enter_parrent!(&mut lock, i, j, k, m);
-                        let e = sp.enter();
+                        let _e = sp.enter();
                         let sub_span = info_span!("inner");
                         let _g = sub_span.enter();
                         info!("abc");
@@ -39,7 +39,7 @@ extern crate any_tracing;
             for j in 0 as i32..3 {
                 for k in 0 as i32..300 {
                     let sp = enter_parrent!(&mut lock, i, j, k);
-                    let e = sp.enter();
+                    let _e = sp.enter();
                     let sub_span = info_span!("inner");
                     let _g = sub_span.enter();
                     info!("abc");
@@ -50,7 +50,7 @@ extern crate any_tracing;
         for i in 0 as i32..1 {
             for j in 0 as i32..300 {
                 let sp = enter_parrent!(&mut lock, i, j);
-                let e = sp.enter();
+                let _e = sp.enter();
                 let sub_span = info_span!("inner");
                 let _g = sub_span.enter();
                 info!("abc");
@@ -60,7 +60,7 @@ extern crate any_tracing;
         for i in 0 as i32..300 {
             let k = format!("task: {i}");
             let sp = enter_parrent!(&mut lock, k);
-            let e = sp.enter();
+            let _e = sp.enter();
             let sub_span = info_span!("inner");
             let _g = sub_span.enter();
             info!("abc");
